@@ -6,7 +6,17 @@ description = "Installable fork of https://github.com/mit-han-lab/pvcnn"
 authors = [
     {name = "Guilherme Pires", email = "mail@gpir.es"},
 ]
-dependencies = ["torch", "tensorboardX", "numpy", "scipy", "numba", "tqdm", "h5py", "plyfile", "six"]
+dependencies = [
+    "torch",
+    "tensorboardX",
+    "numpy",
+    "scipy",
+    "numba",
+    "tqdm",
+    "h5py",
+    "plyfile",
+    "six",
+]
 requires-python = ">=3.8"
 readme = "README.md"
 license = {text = "MIT"}
@@ -18,3 +28,6 @@ build-backend = "pdm.backend"
 [project.scripts]
 pvcnn-train = "pvcnn.train:main"
 pvcnn-train-dml = "pvcnn.train_dml:main"
+pvcnn-eval-shapenet = "pvcnn.evaluate.shapenet.eval:evaluate"
+pvcnn-eval-kitti = "pvcnn.evaluate.kitti.eval:evaluate"
+pvcnn-eval-s3dis = "pvcnn.evaluate.s3dis.eval:evaluate"
