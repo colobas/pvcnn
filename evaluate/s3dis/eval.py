@@ -12,9 +12,9 @@ __all__ = ['evaluate']
 
 
 def prepare():
-    from utils.common import get_save_path
-    from utils.config import configs
-    from utils.device import set_cuda_visible_devices
+    from pvcnn.utils.common import get_save_path
+    from pvcnn.utils.config import configs
+    from pvcnn.utils.device import set_cuda_visible_devices
 
     # since PyTorch jams device selection, we have to parse args before import torch (issue #26790)
     parser = argparse.ArgumentParser()
