@@ -8,9 +8,9 @@
   Args:
     b      : batch size
     n      : number of points
-    r      : voxel resolution
-    r2     : = r * r
-    r3     : s, voxel cube size = r ** 3
+    r      : voxel resolution in x
+    r2     : = rx * ry
+    r3     : s, voxel cube size = rx * ry * rz
     coords : coords of each point, IntTensor[b, 3, n]
     ind    : voxel index of each point, IntTensor[b, n]
     cnt    : #points in each voxel index, IntTensor[b, s]
@@ -77,7 +77,7 @@ __global__ void avg_voxelize_kernel(int b, int c, int n, int s,
     b      : batch size
     c      : #channels
     n      : number of points
-    r3     : voxel cube size = voxel resolution ** 3
+    r3     : voxel cube size = rx * ry * rz
     ind    : voxel index of each point, IntTensor[b, n]
     cnt    : #points in each voxel index, IntTensor[b, s]
     grad_y : grad outputs, FloatTensor[b, c, s]

@@ -7,21 +7,26 @@ __all__ = ['avg_voxelize']
 
 class AvgVoxelization(Function):
     @staticmethod
-    def forward(ctx, features, coords, resolution):
+    def forward(ctx, features, coords, rx, ry=None, rz=None):
         """
         :param ctx:
         :param features: Features of the point cloud, FloatTensor[B, C, N]
         :param coords: Voxelized Coordinates of each point, IntTensor[B, 3, N]
         :param resolution: Voxel resolution
         :return:
-            Voxelized Features, FloatTensor[B, C, R, R, R]
+            Voxelized Features, FloatTensor[B, C, rx, ry, rz]
         """
+        if ry is None:
+            ry = rx
+        if rz is None:
+            rz = rx
+
         features = features.contiguous()
         coords = coords.int().contiguous()
         b, c, _ = features.shape
-        out, indices, counts = _backend.avg_voxelize_forward(features, coords, resolution)
+        out, indices, counts = _backend.avg_voxelize_forward(features, coords, rx, ry, rz)
         ctx.save_for_backward(indices, counts)
-        return out.view(b, c, resolution, resolution, resolution)
+        return out.view(b, c, rx, ry, rz)
 
     @staticmethod
     def backward(ctx, grad_output):

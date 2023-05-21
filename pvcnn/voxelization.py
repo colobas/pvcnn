@@ -25,4 +25,7 @@ class Voxelization(nn.Module):
         return F.avg_voxelize(features, vox_coords, self.r), norm_coords
 
     def extra_repr(self):
-        return 'resolution={}{}'.format(self.r, ', normalized eps = {}'.format(self.eps) if self.normalize else '')
+        s = f"resolution={self.r}"
+        if self.normalize:
+            s += f", normalized eps = {self.eps}"
+        return s

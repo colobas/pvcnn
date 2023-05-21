@@ -6,17 +6,22 @@
 /*
   Function: trilinear devoxelization (forward)
   Args:
-    r        : voxel resolution
+    rx        : voxel resolution in x
+    ry        : voxel resolution in y
+    rz        : voxel resolution in z
     trainig  : whether is training mode
     coords   : the coordinates of points, FloatTensor[b, 3, n]
-    features : features, FloatTensor[b, c, s], s = r ** 3
+    features : features, FloatTensor[b, c, s], s = rx * ry * rz
   Return:
     outs : outputs, FloatTensor[b, c, n]
     inds : the voxel coordinates of point cube, IntTensor[b, 8, n]
     wgts : weight for trilinear interpolation, FloatTensor[b, 8, n]
 */
 std::vector<at::Tensor>
-trilinear_devoxelize_forward(const int r, const bool is_training,
+trilinear_devoxelize_forward(const int rx,
+                             const int ry,
+                             const int rz,
+                             const bool is_training,
                              const at::Tensor coords,
                              const at::Tensor features) {
   CHECK_CUDA(features);
@@ -29,8 +34,9 @@ trilinear_devoxelize_forward(const int r, const bool is_training,
   int b = features.size(0);
   int c = features.size(1);
   int n = coords.size(2);
-  int r2 = r * r;
-  int r3 = r2 * r;
+  int r = rx;
+  int r2 = r * ry;
+  int r3 = r2 * rz;
   at::Tensor outs = torch::zeros(
       {b, c, n}, at::device(features.device()).dtype(at::ScalarType::Float));
   if (is_training) {
@@ -67,7 +73,9 @@ trilinear_devoxelize_forward(const int r, const bool is_training,
 at::Tensor trilinear_devoxelize_backward(const at::Tensor grad_y,
                                          const at::Tensor indices,
                                          const at::Tensor weights,
-                                         const int r) {
+                                         const int rx,
+                                         const int ry,
+                                         const int rz) {
   CHECK_CUDA(grad_y);
   CHECK_CUDA(weights);
   CHECK_CUDA(indices);
@@ -81,7 +89,7 @@ at::Tensor trilinear_devoxelize_backward(const at::Tensor grad_y,
   int b = grad_y.size(0);
   int c = grad_y.size(1);
   int n = grad_y.size(2);
-  int r3 = r * r * r;
+  int r3 = rx * ry * rz;
   at::Tensor grad_x = torch::zeros(
       {b, c, r3}, at::device(grad_y.device()).dtype(at::ScalarType::Float));
   trilinear_devoxelize_grad(b, c, n, r3, indices.data_ptr<int>(),

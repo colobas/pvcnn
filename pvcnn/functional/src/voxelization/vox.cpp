@@ -8,15 +8,19 @@
   Args:
     features: features, FloatTensor[b, c, n]
     coords  : coords of each point, IntTensor[b, 3, n]
-    resolution : voxel resolution
+    rx : voxel resolution in x
+    ry : voxel resolution in y
+    rz : voxel resolution in z
   Return:
-    out : outputs, FloatTensor[b, c, s], s = r ** 3
+    out : outputs, FloatTensor[b, c, s], s = rx * ry * rz
     ind : voxel index of each point, IntTensor[b, n]
     cnt : #points in each voxel index, IntTensor[b, s]
 */
 std::vector<at::Tensor> avg_voxelize_forward(const at::Tensor features,
                                              const at::Tensor coords,
-                                             const int resolution) {
+                                             const int rx,
+                                             const int ry,
+                                             const int rz,) {
   CHECK_CUDA(features);
   CHECK_CUDA(coords);
   CHECK_CONTIGUOUS(features);
@@ -27,9 +31,9 @@ std::vector<at::Tensor> avg_voxelize_forward(const at::Tensor features,
   int b = features.size(0);
   int c = features.size(1);
   int n = features.size(2);
-  int r = resolution;
-  int r2 = r * r;
-  int r3 = r2 * r;
+  int r = rx;
+  int r2 = r * ry;
+  int r3 = r2 * rz;
   at::Tensor ind = torch::zeros(
       {b, n}, at::device(features.device()).dtype(at::ScalarType::Int));
   at::Tensor out = torch::zeros(
