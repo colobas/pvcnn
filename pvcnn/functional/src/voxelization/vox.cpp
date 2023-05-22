@@ -20,7 +20,7 @@ std::vector<at::Tensor> avg_voxelize_forward(const at::Tensor features,
                                              const at::Tensor coords,
                                              const int rx,
                                              const int ry,
-                                             const int rz,) {
+                                             const int rz) {
   CHECK_CUDA(features);
   CHECK_CUDA(coords);
   CHECK_CONTIGUOUS(features);
