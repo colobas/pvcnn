@@ -46,7 +46,7 @@ class TrilinearDevoxelization(Function):
             grad_output.contiguous(), inds, wgts, ctx.rx, ctx.ry, ctx.rz)
         return (
             grad_inputs.view(grad_output.size(0), grad_output.size(1),
-            ctx.rx, ctx.ry, ctx.rz), None, None, None
+            ctx.rx, ctx.ry, ctx.rz), None, None, None, None, None
         )
 
 
